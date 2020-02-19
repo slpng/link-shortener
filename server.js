@@ -9,7 +9,7 @@ const app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
-const url = isLocal ? 'mongodb://localhost:27017' : 'mongodb+srv://slpng:twintailsdefencE1@link-shortener-daab8.mongodb.net/test?retryWrites=true&w=majority';
+const url = isLocal ? 'mongodb://localhost:27017' : 'mongodb+srv://slpng:slpng1234@link-shortener-daab8.mongodb.net/test?retryWrites=true&w=majority';
 const dbName = 'link-shortener';
 const client = new MongoClient(url, { useUnifiedTopology: true });
 
