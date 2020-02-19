@@ -2,14 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
-const PORT = process.env.PORT || 3000;
 const isLocal = process.env.PORT ? false : true;
+const PORT = isLocal ? 3000 : process.env.PORT;
 
 const app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
-const url = 'mongodb://localhost:27017';
+const url = isLocal ? 'mongodb://localhost:27017' : 'mongodb+srv://slpng:twintailsdefencE1@link-shortener-daab8.mongodb.net/test?retryWrites=true&w=majority';
 const dbName = 'link-shortener';
 const client = new MongoClient(url, { useUnifiedTopology: true });
 
