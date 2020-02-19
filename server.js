@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
 const PORT = process.env.PORT || 3000;
+const isLocal = process.env.PORT ? false : true;
 
 const app = express();
 app.use(express.static(__dirname + '/public'));
@@ -80,7 +81,7 @@ const generateShortLink = originalLink => {
         }
     });
 
-    return 'localhost:3000/' + id;
+    return isLocal ? 'localhost:3000/' + id : 'https://link-showortener.herokuapp.com/' + id;
 };
 
 const generateID = () => {
