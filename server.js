@@ -3,15 +3,15 @@ const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
 const isLocal = process.env.PORT ? false : true;
-const PORT = process.env.PORT;
+const PORT = isLocal ? 3000 : process.env.PORT;
 
 const app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
-const url = 'mongodb+srv://slpng:slpng1234@link-shortener-daab8.mongodb.net/test?retryWrites=true&w=majority';
+const uri = isLocal ? 'mongodb://localhost:27017' : process.env.MONGODB_URL;
 const dbName = 'link-shortener';
-const client = new MongoClient(url, { useUnifiedTopology: true, useNewUrlParser: true });
+const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 
 app.post('/', (req, res) => {
