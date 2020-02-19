@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 const url = 'mongodb+srv://slpng:slpng1234@link-shortener-daab8.mongodb.net/test?retryWrites=true&w=majority';
 const dbName = 'link-shortener';
-const client = new MongoClient(url, { useUnifiedTopology: true });
+const client = new MongoClient(url, { useUnifiedTopology: true, useNewUrlParser: true });
 
 
 app.post('/', (req, res) => {
