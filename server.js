@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
+const PORT = process.env.PORT || 3000;
+
 const app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
@@ -40,8 +42,8 @@ app.get('/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log('listening on 3000');
+app.listen(PORT, () => {
+    console.log(`listening on ${PORT}`);
 });
 
 
