@@ -52,6 +52,11 @@ input[type="text"] {
     border: 1px solid #bebebe;
     border-radius: 3px;
     outline: none;
+    transition: border 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border: 1px solid #b030b0;
 }
 
 input[type="text"]::placeholder {
