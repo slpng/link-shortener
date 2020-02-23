@@ -40,7 +40,7 @@ app.get('/:id', (req, res) => {
                 const link = docs[0].originalLink;
                 res.redirect(link);
             } else {
-                res.sendFile(__dirname + '/public/notfound.html');
+                res.sendFile(__dirname + '/public/404.html');
             }
         }
     });
