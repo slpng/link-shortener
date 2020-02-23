@@ -2,6 +2,8 @@
 
 :root {
     --background-color: #202040;
+    --primary-color: #b030b0;
+    --primary-darker: #a02ba0;
 }
 
 html {
@@ -56,7 +58,7 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-    border: 1px solid #b030b0;
+    border: 1px solid var(--primary-color);
 }
 
 input[type="text"]::placeholder {
@@ -72,7 +74,7 @@ button[type="submit"] {
     border: none;
     border-radius: 3px;
     outline: none;
-    background-color: #b030b0;
+    background-color: var(--primary-color);
     color: white;
     cursor: pointer;
     font-size: 15px;
@@ -80,10 +82,26 @@ button[type="submit"] {
 }
 
 button[type="submit"]:active {
-    background-color: #a02ba0;
+    background-color: var(--primary-darker);
 }
 
 input[type="text"],
 button[type="submit"] {
     height: 36px;
+}
+
+div.github-icon {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+
+div.github-icon > a {
+    font-size: 35px;
+    color: #efefef;
+    transition: color 0.3s ease;
+}
+
+div.github-icon > a:hover {
+    color: #c7c7c7;
 }
