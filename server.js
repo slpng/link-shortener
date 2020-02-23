@@ -1,29 +1,29 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
-
-const isLocal = process.env.PORT ? false : true;
-const PORT = isLocal ? 3000 : process.env.PORT;
+const config = require('./config');
 
 const app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
-const uri = isLocal ? 'mongodb://localhost:27017' : process.env.MONGODB_URL;
-const dbName = 'link-shortener';
-const client = new MongoClient(uri, { useUnifiedTopology: true });
+const client = new MongoClient(config.dbUri, { useUnifiedTopology: true });
 
+client.connect(err => {
+    if (!err) {
+        console.log('Connected to the MongoDB database');
+    }
+});
 
 app.post('/', (req, res) => {
     const originalLink = req.body.link;
-    const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
-    const matches = regex.test(originalLink);
+    const isLink = checkIfLink(originalLink);
 
-    if (matches) {
+    if (isLink) {
         const shortLink = generateShortLink(originalLink);
         res.send(shortLink);
     } else {
-        res.send('invalid link');
+        res.send('Invalid link');
     }
 });
 
@@ -43,33 +43,12 @@ app.get('/:id', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`listening on ${PORT}`);
+app.listen(config.port, () => {
+    console.log(`Listening on ${config.port}`);
 });
-
 
 const generateShortLink = originalLink => {
     let id = generateID();
-
-    let foundDocs;
-
-    connectAndCall(findDocument, {
-        data: {id: id},
-        callback: docs => {
-            foundDocs = docs;
-        }
-    });
-
-    while (foundDocs) {
-        id = generateID();
-
-        connectAndCall(findDocument, {
-            data: {id: id},
-            callback: docs => {
-                foundDocs = docs;
-            }
-        });
-    }
 
     connectAndCall(insertDocument, {
         data: {
@@ -77,11 +56,11 @@ const generateShortLink = originalLink => {
             originalLink: originalLink
         },
         callback: () => {
-            console.log('insertion');
+            console.log(`Inserted data`);
         }
     });
 
-    return isLocal ? 'localhost:3000/' + id : 'https://link-showortener.herokuapp.com/' + id;
+    return config.domain + id;
 };
 
 const generateID = () => {
@@ -119,9 +98,14 @@ const insertDocument = (db, args) => {
 const connectAndCall = (func, args) => {
     client.connect(err => {
         if (!err) {
-            const db = client.db(dbName);
+            const db = client.db(config.dbName);
 
             func(db, args);
         }
     });
+};
+
+const checkIfLink = link => {
+    const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+    return regex.test(link);
 };
