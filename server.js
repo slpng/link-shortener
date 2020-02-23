@@ -8,10 +8,13 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
 const client = new MongoClient(config.dbUri, { useUnifiedTopology: true });
-
+let db;
 client.connect(err => {
     if (!err) {
+        db = client.db(config.dbName);
         console.log('Connected to the MongoDB database');
+    } else {
+        throw 'Database connection failed';
     }
 });
 
@@ -30,7 +33,7 @@ app.post('/', (req, res) => {
 app.get('/:id', (req, res) => {
     const id = req.params.id;
 
-    connectAndCall(findDocument, {
+    findDocument(db, {
         data: {id: id},
         callback: docs => {   
             if (docs.length > 0) {
@@ -50,7 +53,7 @@ app.listen(config.port, () => {
 const generateShortLink = originalLink => {
     let id = generateID();
 
-    connectAndCall(insertDocument, {
+    insertDocument(db, {
         data: {
             id: id,
             originalLink: originalLink
@@ -94,16 +97,6 @@ const insertDocument = (db, args) => {
         }
     });
 }
-
-const connectAndCall = (func, args) => {
-    client.connect(err => {
-        if (!err) {
-            const db = client.db(config.dbName);
-
-            func(db, args);
-        }
-    });
-};
 
 const checkIfLink = link => {
     const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
